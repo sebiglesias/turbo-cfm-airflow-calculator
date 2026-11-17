@@ -1,0 +1,15 @@
+{
+  "name": "Turbo CFM Airflow & Sizing Calculator \u2014 Boost PSI, Pressure Ratio & Lbs/Min",
+  "short_name": "Turbo Sizing",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#140707",
+  "theme_color": "#dc2626",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

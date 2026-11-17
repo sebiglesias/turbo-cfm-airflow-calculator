@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turbo CFM Airflow & Sizing Calculator — Boost PSI, Pressure Ratio & Lbs/Min — Accurate Material Estimator</title>
+  <meta name="description" content="Calculate turbocharger airflow in CFM and lbs/min, pressure ratio, and flywheel horsepower to match Garrett and BorgWarner compressor maps.">
+  <link rel="canonical" href="https://sebiglesias.com.ar/turbo-cfm-airflow-calculator/">
+  <meta name="theme-color" content="#dc2626">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Turbo CFM Airflow & Sizing Calculator — Boost PSI, Pressure Ratio & Lbs/Min">
+  <meta property="og:description" content="Calculate turbocharger airflow in CFM and lbs/min, pressure ratio, and flywheel horsepower to match Garrett and BorgWarner compressor maps.">
+  <meta property="og:url" content="https://sebiglesias.com.ar/turbo-cfm-airflow-calculator/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2BNDBQP0W7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-2BNDBQP0W7');
+  </script>
+
+  <!-- Google AdSense -->
+  <meta name="google-adsense-account" content="ca-pub-3381238987477190">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3381238987477190" crossorigin="anonymous"></script>
+
+  <!-- JSON-LD Schema -->
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Turbo CFM Airflow & Sizing Calculator \u2014 Boost PSI, Pressure Ratio & Lbs/Min",
+    "url": "https://sebiglesias.com.ar/turbo-cfm-airflow-calculator/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "description": "Calculate turbocharger airflow in CFM and lbs/min, pressure ratio, and flywheel horsepower to match Garrett and BorgWarner compressor maps.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do you calculate Pressure Ratio on a turbo compressor map?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "**Pressure Ratio (PR) = (Atmospheric Pressure + Boost PSI) / Atmospheric Pressure**.  \nAt sea level (where atmospheric pressure is 14.7 PSI), running 20 PSI of boost equals:  \n$(14.7 + 20) / 14.7 = 2.36$.  \nYou locate 2.36 on the vertical Y-axis of a turbo compressor map to see if the compressor wheel operates in its maximum 75% efficiency island."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the rule of thumb converting turbo mass flow (lbs/min) to horsepower?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A standard internal combustion gasoline engine requires approximately 1 lb/min of airflow to produce **10 to 11 flywheel horsepower**. If your turbo compressor flows 50 lbs/min of air, your engine has the theoretical airflow capacity to make roughly 500 to 550 horsepower with proper fuel and tuning."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if a turbocharger is sized too large or too small?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A turbo that is too large suffers from extreme **turbo lag** (it takes until 4,500+ RPM to generate boost, making the car feel sluggish around town). A turbo that is too small spools instantly off-idle, but chokes at high RPM ('runs out of breath') and blows superheated air, which can cause severe engine detonation and head gasket failure."
+        }
+      }
+    ]
+  }
+]
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">🏁 Forced Induction & Engine Tuning</div>
+      <h1>Turbocharger Airflow (CFM) & Compressor Sizing Calculator</h1>
+      <p class="subtitle">Calculate engine airflow (CFM), mass flow (lbs/min), pressure ratio, and horsepower potential for reading turbo compressor maps.</p>
+    </header>
+
+    <!-- AdSense Top Banner -->
+    <div style="text-align:center; margin: 16px 0;">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-3381238987477190"
+           data-ad-slot="auto"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <main class="calc-grid">
+      <!-- Inputs Card -->
+      <form class="card" id="turbo-cfm-airflow-calculator-form" onsubmit="event.preventDefault();">
+        <h2>📐 Engine Displacement & Boost Target</h2>
+        
+        <div class="input-row">
+          <div class="form-group">
+            <label for="engineDisp">Engine Displacement</label>
+            <div class="input-wrap">
+              <input type="number" id="engineDisp" step="0.1" min="1.0" max="8.0" value="2.5" required>
+              <span class="input-suffix">Liters</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="engineRpm">Maximum Engine Redline RPM</label>
+            <div class="input-wrap">
+              <input type="number" id="engineRpm" step="250" min="4000" max="9500" value="7000" required>
+              <span class="input-suffix">RPM</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="form-group">
+            <label for="boostPsi">Target Boost Pressure</label>
+            <div class="input-wrap">
+              <input type="number" id="boostPsi" step="1" min="3" max="50" value="20" required>
+              <span class="input-suffix">PSI</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="vePct">Volumetric Efficiency (VE)</label>
+            <select id="vePct">
+              <option value="0.85">85% (Stock 2-Valve / Mild Street Engine)</option>
+              <option value="0.92" selected>92% (Modern 4-Valve DOHC / VTEC)</option>
+              <option value="0.98">98% (Ported Head / High Lift Camshafts)</option>
+            </select>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Results Card -->
+      <div class="card">
+        <h2>🎯 Compressor Airflow & Horsepower</h2>
+        
+        <div class="result-hero">
+          <div class="result-label">Turbo Compressor Airflow Needed</div>
+          <div class="result-number" id="turboMassFlow">51.2</div>
+          <div class="result-label" style="color:#ffffff;">lbs / min of Airflow (Garrett Map X-Axis)</div>
+          <div style="font-size:0.95rem; color:#fca5a5; margin-top:6px;" id="hpPotential">Estimated Flywheel Power: ≈ 510–540 HP</div>
+        </div>
+
+        <div class="sub-hero-grid">
+          <div class="sub-hero-col">
+            <div class="sub-hero-label">Pressure Ratio (Y-Axis)</div>
+            <div class="sub-hero-val" id="pressureRatio">2.36 : 1</div>
+            <div class="sub-hero-sub">At 20 PSI boost</div>
+          </div>
+          <div class="sub-hero-col">
+            <div class="sub-hero-label">Volumetric Airflow</div>
+            <div class="sub-hero-val" id="turboCfm">742 CFM</div>
+            <div class="sub-hero-sub">Intercooler rating needed</div>
+          </div>
+        </div>
+
+        <div class="specs-grid">
+          <div class="spec-item">
+            <div class="spec-desc">Engine Naturally Aspirated CFM</div>
+            <div class="spec-val" id="naCfm">314 CFM</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-desc">Compressor Wheel Trim Class</div>
+            <div class="spec-val">Garrett G25-660 / EFR 7163</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-desc">Intercooler Core Size</div>
+            <div class="spec-val">≥ 24" × 12" × 3.5" Bar & Plate</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-desc">Wastegate Diaphragm Pressure</div>
+            <div class="spec-val">1.0 Bar (14.5 PSI Base Spring)</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Amazon Supplies Box -->
+    <section class="supplies-card">
+      <h3>🛠️ Recommended Tools, Hardware & Building Supplies</h3>
+      <div class="supplies-grid">
+        <div class="supply-item">
+          <div>
+            <div class="supply-title">Mishimoto Universal J-Line Front-Mount Intercooler (Black)</div>
+            <div class="supply-desc">Heavy-duty bar-and-plate core supports up to 500 WHP with low internal pressure drop.</div>
+          </div>
+          <a href="https://www.amazon.com/s?k=mishimoto+j+line+intercooler&tag=sebiglesias-20" target="_blank" rel="nofollow noopener" class="btn-amazon">Check on Amazon →</a>
+        </div>
+        <div class="supply-item">
+          <div>
+            <div class="supply-title">Innovate Motorsports MTX-L Plus Wideband Air/Fuel Ratio Gauge</div>
+            <div class="supply-desc">Bosch LSU 4.9 sensor monitors stoichiometric AFR to prevent catastrophic boosted engine knock.</div>
+          </div>
+          <a href="https://www.amazon.com/s?k=innovate+motorsports+wideband+afr+gauge&tag=sebiglesias-20" target="_blank" rel="nofollow noopener" class="btn-amazon">Check on Amazon →</a>
+        </div>
+        <div class="supply-item">
+          <div>
+            <div class="supply-title">Turbosmart GenV WG45 45mm External Wastegate (14 PSI Spring)</div>
+            <div class="supply-desc">High-temp stainless steel body controls boost pressure and prevents boost creep on high-flow manifolds.</div>
+          </div>
+          <a href="https://www.amazon.com/s?k=turbosmart+gen+v+45mm+wastegate&tag=sebiglesias-20" target="_blank" rel="nofollow noopener" class="btn-amazon">Check on Amazon →</a>
+        </div>
+        <div class="supply-item">
+          <div>
+            <div class="supply-title">AEM 30-4406 Digital Display 35 PSI Boost Gauge</div>
+            <div class="supply-desc">Includes 0-5V brass sensor with digital LED sweeping readout for accurate forced induction monitoring.</div>
+          </div>
+          <a href="https://www.amazon.com/s?k=aem+digital+boost+gauge+35+psi&tag=sebiglesias-20" target="_blank" rel="nofollow noopener" class="btn-amazon">Check on Amazon →</a>
+        </div>
+      </div>
+      <p style="font-size:0.75rem; color:#94a3b8; margin-top:14px; margin-bottom:0; text-align:center;">
+        ⚖️ <em>Affiliate Notice: As an Amazon Associate, this site earns from qualifying purchases at no additional cost to you. We strictly link to trade-grade construction tools, hardware, and safety materials.</em>
+      </p>
+    </section>
+
+    <!-- FAQ Section for SEO -->
+    <section class="faq-section">
+      <h2 style="font-size:1.35rem; color:#ffffff; margin-bottom:16px;">Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <div class="faq-q">How do you calculate Pressure Ratio on a turbo compressor map?</div>
+        <div class="faq-a">**Pressure Ratio (PR) = (Atmospheric Pressure + Boost PSI) / Atmospheric Pressure**.  
+At sea level (where atmospheric pressure is 14.7 PSI), running 20 PSI of boost equals:  
+$(14.7 + 20) / 14.7 = 2.36$.  
+You locate 2.36 on the vertical Y-axis of a turbo compressor map to see if the compressor wheel operates in its maximum 75% efficiency island.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What is the rule of thumb converting turbo mass flow (lbs/min) to horsepower?</div>
+        <div class="faq-a">A standard internal combustion gasoline engine requires approximately 1 lb/min of airflow to produce **10 to 11 flywheel horsepower**. If your turbo compressor flows 50 lbs/min of air, your engine has the theoretical airflow capacity to make roughly 500 to 550 horsepower with proper fuel and tuning.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What happens if a turbocharger is sized too large or too small?</div>
+        <div class="faq-a">A turbo that is too large suffers from extreme **turbo lag** (it takes until 4,500+ RPM to generate boost, making the car feel sluggish around town). A turbo that is too small spools instantly off-idle, but chokes at high RPM ('runs out of breath') and blows superheated air, which can cause severe engine detonation and head gasket failure.</div>
+      </div>
+    </section>
+
+    <!-- Bottom AdSense Banner -->
+    <div style="text-align:center; margin: 32px 0;">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-3381238987477190"
+           data-ad-slot="auto"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <footer>
+      <p>© 2026 <a href="https://sebiglesias.com.ar/">sebiglesias.com.ar</a> · Turbo CFM Airflow & Sizing Calculator — Boost PSI, Pressure Ratio & Lbs/Min. Educational and trade reference tool.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
